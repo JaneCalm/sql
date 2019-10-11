@@ -69,8 +69,72 @@ create table communities(
 	INDEX (name)
 );
 
+drop table if exists users_communities;
+create table users_communities(
+	user_id BIGINT UNSIGNED NOT NULL,
+	community_id BIGINT UNSIGNED NOT NULL,
+	
+	primary key (user_id, community_id),
+	foreign key (user_id) references users(id),
+	foreign key (community_id) references communities(id)
+);
 
+drop table if exists media_types;
+create table media_types(
+	id SERIAL PRIMARY KEY,
+	name VARCHAR(150),
+	created_at DATETIME DEFAULT NOW()
+);
 
+drop table if exists media;
+create table media(
+	id SERIAL PRIMARY KEY,
+	media_type_id BIGINT UNSIGNED NOT NULL,
+	user_id BIGINT UNSIGNED NOT NULL,
+	body TEXT,
+	filename VARCHAR(255),
+	`size` int,
+	metadata JSON,
+	created_at DATETIME DEFAULT NOW(),
+	updated_at DATETIME DEFAULT current_timestamp ON UPDATE current_timestamp,
+	
+	index(user_id),
+	foreign key (user_id) references users(id),
+	foreign key (media_type_id) references media_types(id)
+);
+
+ALTER TABLE vk.profiles ADD CONSTRAINT profiles_FK_1 FOREIGN KEY (photo_id) REFERENCES vk.media(id);
+
+drop table if exists likes;
+create table likes(
+	id SERIAL PRIMARY KEY,
+	user_id BIGINT UNSIGNED NOT NULL,
+	media_id BIGINT UNSIGNED NOT NULL,
+	created_at DATETIME DEFAULT NOW()	
+);
+
+ALTER TABLE vk.likes ADD CONSTRAINT likes_FK FOREIGN KEY (user_id) REFERENCES vk.users(id);
+ALTER TABLE vk.likes ADD CONSTRAINT likes_FK_1 FOREIGN KEY (media_id) REFERENCES vk.media(id);
+
+	
+drop table if exists photo_albums;
+create table photo_albums(
+	id SERIAL PRIMARY KEY,
+	name VARCHAR(150),
+	user_id BIGINT UNSIGNED NOT NULL,
+	
+	foreign key (user_id) references users(id)	
+);
+
+drop table if exists photos;
+create table photos(
+	id SERIAL PRIMARY KEY,
+	album_id BIGINT UNSIGNED NOT NULL,
+	media_id BIGINT UNSIGNED NOT NULL,
+	
+	foreign key (album_id) references photo_albums(id),
+	foreign key (media_id) references media(id)	
+);
 
 
 
