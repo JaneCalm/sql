@@ -1,8 +1,18 @@
+/*Проанализировать структуру БД vk, которую мы создали на занятии, 
+и внести предложения по усовершенствованию (если такие идеи есть). 
+Напишите пожалуйста, всё-ли понятно по структуре.
+
+2 Добавить необходимую таблицу/таблицы для того, чтобы можно было использовать лайки для медиафайлов, постов и пользователей.
+
+3 Используя сервис http://filldb.info или другой по вашему желанию, сгенерировать тестовые данные для всех таблиц, учитывая логику связей.
+ Для всех таблиц, где это имеет смысл, создать не менее 100 строк. Создать локально БД vk и загрузить в неё тестовые данные.
+*/
+
 drop database if exists vk;
 create database vk;
 use vk;
 
-drop database if exists users;
+drop table if exists users;
 create table users(
 	id SERIAL PRIMARY KEY,
 	firstname VARCHAR(100),
@@ -15,7 +25,7 @@ create table users(
 	INDEX (firstname, lastname)
 );
 
-drop database if exists `profiles`;
+drop table if exists `profiles`;
 create table `profiles`(
 	user_id SERIAL PRIMARY KEY,
 	gender CHAR(1),
@@ -32,7 +42,7 @@ alter table `profiles`
 	on delete RESTRICT
 ;
 
-drop database if exists messages;
+drop table if exists messages;
 create table messages(
 	user_id SERIAL PRIMARY KEY,
 	from_user_id BIGINT UNSIGNED NOT NULL,
@@ -46,7 +56,7 @@ create table messages(
 	foreign key (to_user_id) references users(id)
 );
 
-drop database if exists friend_requests;
+drop table if exists friend_requests;
 create table friend_requests(
 	 initiator_user_id BIGINT UNSIGNED NOT NULL,
 	 target_user_id BIGINT UNSIGNED NOT NULL,
@@ -61,7 +71,7 @@ create table friend_requests(
 	 foreign key (target_user_id) references users(id)
 );
 
-drop database if exists communities;
+drop table if exists communities;
 create table communities(
 	id SERIAL PRIMARY KEY,
 	name VARCHAR(150),
@@ -103,7 +113,7 @@ create table media(
 	foreign key (media_type_id) references media_types(id)
 );
 
-ALTER TABLE vk.profiles ADD CONSTRAINT profiles_FK_1 FOREIGN KEY (photo_id) REFERENCES vk.media(id);
+ALTER TABLE vk.`profiles` ADD CONSTRAINT profiles_FK_1 FOREIGN KEY (photo_id) REFERENCES vk.media(id);
 
 drop table if exists likes;
 create table likes(
