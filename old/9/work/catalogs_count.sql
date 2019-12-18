@@ -1,7 +1,0 @@
-DELIMITER //
-
-CREATE TRIGGER catalogs_count AFTER INSERT ON catalogs
-FOR EACH ROW
-BEGIN
-  SELECT COUNT(*) INTO @total FROM catalogs;
-END//
